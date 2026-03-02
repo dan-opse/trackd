@@ -42,9 +42,15 @@
       --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    html,
-    body {
-      height: 100%;
+    [data-mode="light"] {
+      --bg: #f5f3ff;
+      --surface: #ffffff;
+      --border: #e0d9ff;
+      --text-primary: #1a0050;
+      --text-secondary: #6b6b80;
+      --text-muted: #9b9bac;
+      --completed-bg: rgba(124, 58, 237, 0.06);
+      --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.05);
     }
 
     body {
@@ -59,6 +65,7 @@
       background-image:
         radial-gradient(ellipse 60% 40% at 50% -10%, rgba(124, 58, 237, 0.18) 0%, transparent 70%),
         radial-gradient(ellipse 40% 30% at 80% 80%, rgba(124, 58, 237, 0.08) 0%, transparent 60%);
+      background-attachment: fixed;
     }
 
     /* ── Header ──────────────────────────────────── */
@@ -226,7 +233,6 @@
     .heatmap-scroll-container {
       overflow-x: auto;
       padding-bottom: 8px;
-      /* for scrollbar */
     }
 
     .heatmap-scroll-container::-webkit-scrollbar {
@@ -236,6 +242,23 @@
     .heatmap-scroll-container::-webkit-scrollbar-thumb {
       background: var(--border);
       border-radius: 4px;
+    }
+
+    .heatmap-month-labels {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 4px;
+      min-width: max-content;
+    }
+
+    .heatmap-month-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      overflow: hidden;
+      white-space: nowrap;
     }
 
     .heatmap-grid {
@@ -436,12 +459,28 @@
       font-weight: 500;
       color: var(--text-primary);
       transition: color var(--transition), text-decoration-color var(--transition);
-      word-break: break-word;
       line-height: 1.4;
       cursor: pointer;
       border-radius: 6px;
       padding: 2px 4px;
       margin: -2px -4px;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Task row badges — inline right of task name */
+    .task-label-badges {
+      display: flex;
+      gap: 4px;
+      flex-wrap: nowrap;
+      flex-shrink: 0;
+      align-items: center;
+    }
+
+    .task-label-badges:empty {
+      display: none;
     }
 
     .task-label:hover {
@@ -956,6 +995,294 @@
         font-size: 1.5rem;
       }
     }
+
+    /* ── Label System ──────────────────────────────────────────── */
+    .label-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px 3px 7px;
+      border-radius: 100px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      transition: opacity var(--transition), transform var(--transition), filter var(--transition);
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .label-pill:hover {
+      filter: brightness(1.15);
+    }
+
+    .label-pill .label-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .label-pill .label-delete {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+      margin-left: 1px;
+      opacity: 0.6;
+      font-size: 0.7rem;
+      padding: 0;
+      line-height: 1;
+      transition: opacity var(--transition);
+    }
+
+    .label-pill .label-delete:hover {
+      opacity: 1;
+    }
+
+    /* Panel label grid */
+    .label-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    /* Assigned state */
+    .label-pill.assigned {
+      opacity: 1;
+    }
+
+    .label-pill.unassigned {
+      opacity: 0.45;
+    }
+
+    /* Create label inline row */
+    .label-create-row {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .label-create-row.visible {
+      display: flex;
+    }
+
+    .label-create-input {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color var(--transition);
+      min-width: 0;
+    }
+
+    .label-create-input:focus {
+      border-color: var(--accent);
+    }
+
+    .label-create-color {
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: transparent;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .label-create-color::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+
+    .label-create-color::-webkit-color-swatch {
+      border: none;
+      border-radius: 5px;
+    }
+
+    .label-create-confirm {
+      width: 30px;
+      height: 30px;
+      border: none;
+      border-radius: 6px;
+      background: var(--accent);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background var(--transition);
+      flex-shrink: 0;
+    }
+
+    .label-create-confirm:hover {
+      background: #6d28d9;
+      transform: scale(1.06);
+    }
+
+    .label-create-confirm:active {
+      transform: scale(0.95);
+    }
+
+    .label-add-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 100px;
+      border: 1.5px dashed var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: border-color var(--transition), color var(--transition);
+    }
+
+    .label-add-btn:hover {
+      border-color: var(--accent-light);
+      color: var(--accent-light);
+    }
+
+    .task-label-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 7px 2px 5px;
+      border-radius: 100px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .task-label-badge .label-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ── Vertical Dock ─────────────────────────────────────────── */
+    #app-dock {
+      position: fixed;
+      left: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 150;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 12px 10px;
+      background: rgba(26, 26, 36, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(124, 58, 237, 0.08);
+    }
+
+    .dock-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: color var(--transition), background var(--transition), transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-origin: center;
+    }
+
+    .dock-item:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.08);
+      transform: scale(1.18);
+    }
+
+    .dock-item:active {
+      transform: scale(0.98);
+    }
+
+    .dock-item.active {
+      color: var(--accent-light);
+      background: rgba(124, 58, 237, 0.18);
+    }
+
+    .dock-item svg {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      pointer-events: none;
+    }
+
+    .dock-separator {
+      width: 22px;
+      height: 1px;
+      background: var(--border);
+      margin: 2px 0;
+      opacity: 0.5;
+    }
+
+    /* Tooltip */
+    .dock-item::after {
+      content: attr(data-label);
+      position: absolute;
+      left: calc(100% + 12px);
+      top: 50%;
+      transform: translateY(-50%) translateX(-4px);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+      padding: 5px 10px;
+      border-radius: 8px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 150ms ease, transform 150ms ease;
+      z-index: 200;
+    }
+
+    .dock-item:hover::after {
+      opacity: 1;
+      transform: translateY(-50%) translateX(0);
+    }
+
+    /* Hide dock on very small screens where it'd overlay content */
+    @media (max-width: 680px) {
+      #app-dock {
+        display: none;
+      }
+    }
   </style>
 </head>
 
@@ -984,6 +1311,9 @@
         </div>
       </div>
       <div class="heatmap-scroll-container">
+        <div class="heatmap-month-labels" id="heatmap-month-labels" aria-hidden="true">
+          <!-- Month labels injected by JS -->
+        </div>
         <div class="heatmap-grid" id="heatmap-grid" role="grid" aria-label="Activity heatmap">
           <!-- JS will inject columns and cells here -->
         </div>
@@ -1050,6 +1380,23 @@
           <span class="duration-custom-label">min custom</span>
         </div>
       </div>
+      <div class="panel-field" id="panel-label-field">
+        <label>Label</label>
+        <div class="label-grid" id="panel-label-grid">
+          <!-- Labels rendered by JS -->
+        </div>
+        <div class="label-create-row" id="label-create-row">
+          <input type="text" class="label-create-input" id="label-create-input" placeholder="Label name…"
+            maxlength="30" />
+          <input type="color" class="label-create-color" id="label-create-color" value="#7c3aed"
+            aria-label="Label color" />
+          <button class="label-create-confirm" id="label-create-confirm" aria-label="Confirm label"
+            title="Create label">✓</button>
+        </div>
+        <button class="label-add-btn" id="label-add-btn" style="margin-top: 8px;" aria-label="Create new label">
+          <span style="font-size: 0.9rem; line-height: 1;">+</span> New Label
+        </button>
+      </div>
       <div class="panel-field">
         <label>Repeat</label>
         <div class="repeat-segmented-control" id="repeat-control" role="group" aria-label="Repeat frequency">
@@ -1069,7 +1416,47 @@
     <i class="fab-icon">+</i>
   </button>
 
+  <!-- Vertical Dock -->
+  <nav id="app-dock" aria-label="Navigation dock">
+    <button class="dock-item active" id="dock-home" data-label="Home" aria-label="Home — go to today" title="Home">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z" />
+        <polyline points="9 21 9 12 15 12 15 21" />
+      </svg>
+    </button>
+    <div class="dock-separator" role="separator"></div>
+    <a class="dock-item" href="stats.html" data-label="Stats" aria-label="Stats" title="Stats">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="3" y="12" width="4" height="9" rx="1" />
+        <rect x="10" y="7" width="4" height="14" rx="1" />
+        <rect x="17" y="3" width="4" height="18" rx="1" />
+      </svg>
+    </a>
+    <a class="dock-item" href="settings.html" data-label="Settings" aria-label="Settings" title="Settings">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="3" />
+        <path
+          d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+      </svg>
+    </a>
+  </nav>
+
+
   <script>
+    // ── Apply saved theme ─────────────────────────────────────────
+    (function () {
+      const accent = localStorage.getItem('trackd-accent');
+      const mode = localStorage.getItem('trackd-mode') || 'dark';
+      if (accent) {
+        const r = parseInt(accent.slice(1, 3), 16), g = parseInt(accent.slice(3, 5), 16), b = parseInt(accent.slice(5, 7), 16);
+        const light = '#' + [r, g, b].map(c => Math.round(c + (255 - c) * 0.55).toString(16).padStart(2, '0')).join('');
+        document.documentElement.style.setProperty('--accent', accent);
+        document.documentElement.style.setProperty('--accent-glow', `rgba(${r},${g},${b},0.35)`);
+        document.documentElement.style.setProperty('--accent-light', light);
+      }
+      document.documentElement.setAttribute('data-mode', mode);
+    })();
+
     // ── State & Date Helpers ──────────────────────────────────────
     function getLocalDateString(d = new Date()) {
       const year = d.getFullYear();
@@ -1101,6 +1488,7 @@
     if (!appState.currentDate) appState.currentDate = getLocalDateString();
     if (!appState.templates) appState.templates = [];
     if (!appState.syncedDates) appState.syncedDates = [];
+    if (!appState.labels) appState.labels = [];
 
     let nextId = parseInt(localStorage.getItem('trackd-next-id') || '1', 10);
 
@@ -1243,27 +1631,59 @@
     // ── Precompute & Render Heatmap ───────────────────────────────
     function renderHeatmap() {
       const grid = document.getElementById('heatmap-grid');
+      const monthRow = document.getElementById('heatmap-month-labels');
       let html = '';
 
       const today = new Date();
-      today.setHours(0, 0, 0, 0); // Exact start of today
+      today.setHours(0, 0, 0, 0);
 
-      // We'll show ~16 weeks into the past, plus 1 week into the future
       const HEATMAP_WEEKS = 16;
       const startDate = new Date(today);
       startDate.setDate(today.getDate() - (HEATMAP_WEEKS * 7));
-      const startDayOfWeek = startDate.getDay(); // 0 is Sunday
-      startDate.setDate(startDate.getDate() - startDayOfWeek); // Roll back to Sunday
+      const startDayOfWeek = startDate.getDay();
+      startDate.setDate(startDate.getDate() - startDayOfWeek);
 
       const endDate = new Date(today);
-      endDate.setDate(today.getDate() + 7); // 1 week ahead
+      endDate.setDate(today.getDate() + 7);
 
+      const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const CELL_W = 12 + 4; // cell width + gap
+
+      // Collect column data to build month label row
+      let columns = []; // { startDate, weekIndex }
       let iterDate = new Date(startDate);
-
+      let weekIndex = 0;
       while (iterDate <= endDate || iterDate.getDay() !== 0) {
-        if (iterDate.getDay() === 0) {
-          html += '<div class="heatmap-column">';
+        if (iterDate.getDay() === 0) columns.push({ month: iterDate.getMonth(), weekIndex });
+        if (iterDate.getDay() === 6) weekIndex++;
+        iterDate.setDate(iterDate.getDate() + 1);
+      }
+
+      // Build month label spans
+      let monthHtml = '';
+      let lastMonth = -1;
+      let labelPositions = []; // { monthName, colIdx }
+      columns.forEach((col, i) => {
+        if (col.month !== lastMonth) {
+          labelPositions.push({ name: MONTHS[col.month], colIdx: i });
+          lastMonth = col.month;
         }
+      });
+
+      // Each column = CELL_W px wide; we space labels proportionally
+      labelPositions.forEach((lbl, i) => {
+        const nextIdx = i + 1 < labelPositions.length ? labelPositions[i + 1].colIdx : columns.length;
+        const span = nextIdx - lbl.colIdx;
+        const widthPx = span * CELL_W - 4;
+        monthHtml += `<span class="heatmap-month-label" style="width:${widthPx}px;flex-shrink:0;">${lbl.name}</span>`;
+      });
+      if (monthRow) monthRow.innerHTML = monthHtml;
+
+      // Build grid cells
+      html = '';
+      iterDate = new Date(startDate);
+      while (iterDate <= endDate || iterDate.getDay() !== 0) {
+        if (iterDate.getDay() === 0) html += '<div class="heatmap-column">';
 
         const dateStr = getLocalDateString(iterDate);
         const dayTasks = appState.history[dateStr] || [];
@@ -1275,8 +1695,6 @@
         if (doneCount >= 5) level = 3;
 
         const isActive = dateStr === appState.currentDate ? ' active' : '';
-
-        // Disable clicking for days > tomorrow
         const maxDate = new Date(today);
         maxDate.setDate(today.getDate() + 1);
         const isClickable = iterDate <= maxDate;
@@ -1284,27 +1702,20 @@
         if (isClickable) {
           html += `<div class="heatmap-cell${isActive}" data-date="${dateStr}" data-level="${level}" title="${dateStr}: ${doneCount} completed"></div>`;
         } else {
-          // Future unclickable cells
           html += `<div class="heatmap-cell" style="opacity: 0.15; cursor: default;" data-level="${level}" title="Future: ${dateStr}"></div>`;
         }
 
-        if (iterDate.getDay() === 6) {
-          html += '</div>';
-        }
+        if (iterDate.getDay() === 6) html += '</div>';
         iterDate.setDate(iterDate.getDate() + 1);
       }
 
       grid.innerHTML = html;
 
-      // Scroll right
       const container = document.querySelector('.heatmap-scroll-container');
       container.scrollLeft = container.scrollWidth;
 
-      // Click listeners
       grid.querySelectorAll('.heatmap-cell[data-date]').forEach(cell => {
-        cell.addEventListener('click', () => {
-          changeDate(cell.dataset.date);
-        });
+        cell.addEventListener('click', () => changeDate(cell.dataset.date));
       });
     }
 
@@ -1380,11 +1791,29 @@
           ${escapeHtml(task.title)}
           ${repeatHtml}
         </span>
+        <span class="task-label-badges" id="badges-${task.id}"></span>
         <span class="task-duration${task.duration ? ' visible' : ''}">${task.duration ? formatDuration(task.duration) : ''}</span>
         <button class="task-delete" aria-label="Delete task: ${escapeHtml(task.title)}" title="Delete task">✕</button>
       `;
 
+      // Render label badges
+      const badgesEl = li.querySelector(`#badges-${task.id}`);
+      if (task.labelIds && task.labelIds.length > 0) {
+        task.labelIds.forEach(lid => {
+          const lbl = appState.labels.find(l => l.id === lid);
+          if (lbl) {
+            const badge = document.createElement('span');
+            badge.className = 'task-label-badge';
+            badge.style.border = `1px solid ${lbl.color}66`;
+            badge.style.color = lbl.color;
+            badge.innerHTML = `<span class="label-dot" style="background:${lbl.color}"></span>${escapeHtml(lbl.name)}`;
+            badgesEl.appendChild(badge);
+          }
+        });
+      }
+
       const checkbox = li.querySelector('input[type="checkbox"]');
+
       checkbox.addEventListener('change', () => toggleTask(task.id));
 
       const deleteBtn = li.querySelector('.task-delete');
@@ -1527,6 +1956,9 @@
       // Populate Repeat
       selectRepeat(task.repeat || 'none');
 
+      // Populate Labels
+      renderPanelLabels();
+
       hideAutosaveIndicator();
 
       overlay.classList.add('open');
@@ -1602,6 +2034,25 @@
       }
 
       saveState();
+
+      // Update label badges on task row
+      const badgesEl2 = document.querySelector(`#badges-${activePanelId}`);
+      if (badgesEl2) {
+        badgesEl2.innerHTML = '';
+        if (task.labelIds && task.labelIds.length > 0) {
+          task.labelIds.forEach(lid => {
+            const lbl = appState.labels.find(l => l.id === lid);
+            if (lbl) {
+              const badge = document.createElement('span');
+              badge.className = 'task-label-badge';
+              badge.style.border = `1px solid ${lbl.color}66`;
+              badge.style.color = lbl.color;
+              badge.innerHTML = `<span class="label-dot" style="background:${lbl.color}"></span>${escapeHtml(lbl.name)}`;
+              badgesEl2.appendChild(badge);
+            }
+          });
+        }
+      }
 
       // Update task row in list without full re-render
       const li = document.querySelector(`.task-item[data-id="${activePanelId}"]`);
@@ -1702,8 +2153,177 @@
         .replace(/'/g, '&#039;');
     }
 
+    // ── Label System ──────────────────────────────────────────────
+    const LABEL_COLORS = [
+      '#7c3aed', // Electric Violet
+      '#0891b2', // Teal
+      '#d97706', // Amber
+      '#e11d48', // Rose
+      '#0284c7', // Sky Blue
+      '#16a34a', // Green
+    ];
+
+    function getLabelColor(idx) {
+      return LABEL_COLORS[idx % LABEL_COLORS.length];
+    }
+
+    function renderPanelLabels() {
+      const grid = document.getElementById('panel-label-grid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      const task = activePanelId !== null ? getTasks().find(t => t.id === activePanelId) : null;
+      const assigned = task && task.labelIds ? task.labelIds : [];
+
+      if (appState.labels.length === 0) {
+        const hint = document.createElement('span');
+        hint.style.cssText = 'font-size:0.75rem; color:var(--text-muted); font-style:italic;';
+        hint.textContent = 'No labels yet';
+        grid.appendChild(hint);
+        return;
+      }
+
+      appState.labels.forEach(lbl => {
+        const isAssigned = assigned.includes(lbl.id);
+        const pill = document.createElement('span');
+        pill.className = 'label-pill ' + (isAssigned ? 'assigned' : 'unassigned');
+        pill.style.backgroundColor = lbl.color + '22';
+        pill.style.borderColor = lbl.color + '88';
+        pill.style.color = lbl.color;
+        pill.title = isAssigned ? 'Click to remove label' : 'Click to assign label';
+
+        pill.innerHTML = `
+          <span class="label-dot" style="background:${lbl.color}"></span>
+          ${escapeHtml(lbl.name)}
+          <button class="label-delete" title="Delete label '${escapeHtml(lbl.name)}'" aria-label="Delete label ${escapeHtml(lbl.name)}">✕</button>
+        `;
+
+        // Click pill body (not delete btn) = toggle assignment
+        pill.addEventListener('click', (e) => {
+          if (e.target.classList.contains('label-delete')) return;
+          toggleTaskLabel(lbl.id);
+        });
+
+        // Delete button = remove label entirely
+        pill.querySelector('.label-delete').addEventListener('click', (e) => {
+          e.stopPropagation();
+          deleteLabel(lbl.id);
+        });
+
+        grid.appendChild(pill);
+      });
+    }
+
+    function createLabel(name, specificColor = null) {
+      name = name.trim();
+      if (!name) return;
+
+      const color = specificColor || getLabelColor(appState.labels.length);
+      const id = Date.now().toString(36) + Math.random().toString(36).substring(2);
+      appState.labels.push({ id, name, color });
+      saveState();
+      renderPanelLabels();
+    }
+
+    function deleteLabel(labelId) {
+      appState.labels = appState.labels.filter(l => l.id !== labelId);
+      // Also remove from all tasks
+      Object.values(appState.history).forEach(dayTasks => {
+        dayTasks.forEach(t => {
+          if (t.labelIds) t.labelIds = t.labelIds.filter(id => id !== labelId);
+        });
+      });
+      saveState();
+      renderPanelLabels();
+      renderTasks();
+    }
+
+    function toggleTaskLabel(labelId) {
+      if (activePanelId === null) return;
+      const task = getTasks().find(t => t.id === activePanelId);
+      if (!task) return;
+      if (!task.labelIds) task.labelIds = [];
+      const idx = task.labelIds.indexOf(labelId);
+      if (idx === -1) {
+        task.labelIds.push(labelId);
+      } else {
+        task.labelIds.splice(idx, 1);
+      }
+      saveState();
+      renderPanelLabels();
+      // Update badge on task row immediately
+      const badgesEl = document.querySelector(`#badges-${task.id}`);
+      if (badgesEl) {
+        badgesEl.innerHTML = '';
+        (task.labelIds || []).forEach(lid => {
+          const lbl = appState.labels.find(l => l.id === lid);
+          if (lbl) {
+            const badge = document.createElement('span');
+            badge.className = 'task-label-badge';
+            badge.style.border = `1px solid ${lbl.color}66`;
+            badge.style.color = lbl.color;
+            badge.innerHTML = `<span class="label-dot" style="background:${lbl.color}"></span>${escapeHtml(lbl.name)}`;
+            badgesEl.appendChild(badge);
+          }
+        });
+      }
+      showAutosaveIndicator();
+    }
+
+    // Wire up label UI
+    const labelAddBtn = document.getElementById('label-add-btn');
+    const labelCreateRow = document.getElementById('label-create-row');
+    const labelCreateInput = document.getElementById('label-create-input');
+    const labelCreateColor = document.getElementById('label-create-color');
+    const labelCreateConfirm = document.getElementById('label-create-confirm');
+
+    labelAddBtn.addEventListener('click', () => {
+      labelCreateRow.classList.toggle('visible');
+      if (labelCreateRow.classList.contains('visible')) {
+        labelCreateInput.focus();
+        labelCreateColor.value = getLabelColor(appState.labels.length);
+      }
+    });
+
+    function doCreateLabel() {
+      const name = labelCreateInput.value;
+      const color = labelCreateColor.value;
+      if (name.trim()) {
+        createLabel(name, color);
+        labelCreateInput.value = '';
+        labelCreateRow.classList.remove('visible');
+      }
+      labelAddBtn.style.display = '';
+    }
+
+    labelCreateConfirm.addEventListener('click', doCreateLabel);
+    labelCreateInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); doCreateLabel(); }
+      if (e.key === 'Escape') {
+        labelCreateRow.classList.remove('visible');
+        labelAddBtn.style.display = '';
+        labelCreateInput.value = '';
+      }
+    });
+
+    // ── Dock Navigation ───────────────────────────────────────────
+    document.getElementById('dock-home').addEventListener('click', () => {
+      const todayStr = getLocalDateString();
+      if (appState.currentDate !== todayStr) {
+        changeDate(todayStr);
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Update active state
+      document.querySelectorAll('.dock-item').forEach(b => b.classList.remove('active'));
+      document.getElementById('dock-home').classList.add('active');
+    });
+
+    // Stats & Settings are no-ops for now — already styled
+    // (no addEventListener needed)
+
     // ── Init ──────────────────────────────────────────────────────
     renderTasks();
+
   </script>
 </body>
 
