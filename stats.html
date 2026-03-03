@@ -52,7 +52,7 @@
             background-color: var(--bg);
             color: var(--text-primary);
             min-height: 100vh;
-            padding: 0 24px 80px 90px;
+            padding: 0 24px 80px 110px;
             background-image:
                 radial-gradient(ellipse 60% 40% at 50% -10%, color-mix(in srgb, var(--accent) 18%, transparent) 0%, transparent 70%),
                 radial-gradient(ellipse 40% 30% at 80% 80%, color-mix(in srgb, var(--accent) 8%, transparent) 0%, transparent 60%);
@@ -209,6 +209,8 @@
             border-radius: var(--radius-card);
             box-shadow: var(--shadow-card);
             padding: 22px 24px;
+            display: flex;
+            flex-direction: column;
         }
 
         .chart-title {
@@ -224,7 +226,8 @@
         .chart-relative-container {
             position: relative;
             width: 100%;
-            height: 140px;
+            flex: 1;
+            min-height: 140px;
         }
 
         /* The container for the SVG graph and X-axis */
@@ -262,13 +265,18 @@
         }
 
         .area-chart-wrap .data-dot {
-            fill: var(--accent);
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent);
+            transform: translate(-50%, -50%);
             cursor: pointer;
-            transition: r 0.15s ease;
+            transition: transform 0.15s ease;
         }
 
         .area-chart-wrap .data-dot:hover {
-            r: 5;
+            transform: translate(-50%, -50%) scale(1.5);
         }
 
         .x-labels {
@@ -453,7 +461,7 @@
             border: 1px solid transparent;
             border-radius: 8px;
             padding: 8px 6px;
-            min-height: 56px;
+            min-height: 72px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -831,8 +839,8 @@
             document.getElementById('ring-label').textContent = 'No tasks recorded';
         }
 
-        // Sparkline — last 7 days
-        const sparkDays = 7;
+        // Sparkline — last 14 days
+        const sparkDays = 14;
         const maxSpark = Math.max(1, ...Array.from({ length: sparkDays }, (_, i) => {
             const d = new Date(today); d.setDate(d.getDate() - i);
             return dailyDone[getLocalDateString(d)] || 0;
@@ -903,15 +911,15 @@
         const tooltip = document.getElementById('chart-tooltip');
 
         // Dots
+        const chartWrap = document.querySelector('.area-chart-wrap');
         pts.forEach((p, i) => {
-            const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            c.setAttribute('class', 'data-dot');
-            c.setAttribute('cx', p.x);
-            c.setAttribute('cy', p.y);
-            c.setAttribute('r', '3');
+            const dot = document.createElement('div');
+            dot.className = 'data-dot';
+            dot.style.left = `${(p.x / W) * 100}%`;
+            dot.style.top = `${(p.y / H) * 100}%`;
 
             // Interaction for tooltip
-            c.addEventListener('mouseenter', (e) => {
+            dot.addEventListener('mouseenter', (e) => {
                 const rect = svg.getBoundingClientRect();
                 // Map SVG viewBox coords to screen px coords approximately
                 const xPx = (p.x / W) * rect.width;
@@ -922,11 +930,11 @@
                 tooltip.style.top = `${yPx - 10}px`;
                 tooltip.classList.add('visible');
             });
-            c.addEventListener('mouseleave', () => {
+            dot.addEventListener('mouseleave', () => {
                 tooltip.classList.remove('visible');
             });
 
-            svg.appendChild(c);
+            chartWrap.appendChild(dot);
         });
 
         // X labels (day names)
@@ -937,6 +945,7 @@
             const s = document.createElement('span');
             s.style.flex = (i === 0 || i === chartDays - 1) ? '0 0 auto' : '1';
             s.style.textAlign = (i === 0) ? 'left' : (i === chartDays - 1 ? 'right' : 'center');
+
             s.textContent = dayNames[p.d.getDay()];
             xLabels.appendChild(s);
         });

@@ -235,10 +235,24 @@
             height: 40px;
             border: 2px solid var(--border);
             border-radius: 50%;
-            padding: 2px;
-            background: var(--surface);
+            padding: 0;
+            background: transparent;
             cursor: pointer;
             transition: border-color var(--transition), box-shadow var(--transition);
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 2px;
+        }
+
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 50%;
+        }
+
+        input[type="color"]::-moz-color-swatch {
+            border: none;
+            border-radius: 50%;
         }
 
         input[type="color"]:hover {
@@ -260,8 +274,8 @@
         }
 
         .preview-dot {
-            width: 18px;
-            height: 18px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
             background: var(--accent);
             box-shadow: 0 0 12px var(--accent-glow);
@@ -308,6 +322,20 @@
         .mode-icon {
             font-size: 1.8rem;
             line-height: 1;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mode-icon svg {
+            width: 28px;
+            height: 28px;
+            stroke: currentColor;
+            stroke-width: 2.5;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
         .mode-name {
@@ -460,11 +488,27 @@
             <div class="settings-card-title">Display Mode</div>
             <div class="mode-options">
                 <button class="mode-card active" id="mode-dark" aria-label="Dark mode" title="Dark mode">
-                    <span class="mode-icon">🌙</span>
+                    <span class="mode-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </span>
                     <span class="mode-name">Dark</span>
                 </button>
                 <button class="mode-card" id="mode-light" aria-label="Light mode" title="Light mode">
-                    <span class="mode-icon">☀️</span>
+                    <span class="mode-icon">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    </span>
                     <span class="mode-name">Light</span>
                 </button>
             </div>
